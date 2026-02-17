@@ -3,71 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Research Hub 🧸</title>
+    <title>Research Hub | ZeroClaw Powered 🦀</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
-        body { font-family: 'Pretendard', sans-serif; background-color: #f8f9fa; }
+        body { font-family: 'Pretendard', sans-serif; background-color: #0f172a; color: #f1f5f9; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .evolve-glow { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
     </style>
 </head>
-<body class="p-8">
-    <div class="max-w-4xl mx-auto">
-        <header class="mb-12 text-center">
-            <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Private Research Hub</h1>
-            <p class="text-gray-500">당신만의 지식 탐험과 학습을 위한 공간 🧸</p>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-12 flex justify-between items-center">
+            <div>
+                <h1 class="text-4xl font-black text-white mb-2 flex items-center gap-3">
+                    <span class="text-blue-500">Zero</span>Claw Research <span class="text-sm bg-blue-600 px-2 py-1 rounded text-white">BETA</span>
+                </h1>
+                <p class="text-slate-400 italic">"Zero overhead. Zero compromise. Infinite Knowledge." 🧸</p>
+            </div>
+            <div id="engine-status" class="text-right">
+                <div id="level-text" class="text-2xl font-bold text-blue-400">LEVEL 1</div>
+                <div class="text-xs text-slate-500 uppercase tracking-widest">Evolution Stage</div>
+            </div>
         </header>
 
-        <section class="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-gray-100">
-            <div class="flex gap-4">
-                <input type="text" id="query" placeholder="궁금한 주제를 입력하세요 (예: 양자역학, AI 윤리)" 
-                       class="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <button onclick="startSearch()" class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition font-bold">
-                    검색 및 학습
-                </button>
+        <!-- 핵심 제어 섹션 -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
+            <div class="lg:col-span-3">
+                <section class="glass-card rounded-3xl p-8 evolve-glow">
+                    <h3 class="text-lg font-bold mb-6 text-slate-300 flex items-center gap-2">
+                        <i class="fas fa-satellite-dish text-blue-500"></i> 새로운 지식 주제 주입
+                    </h3>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <input type="text" id="query" placeholder="학습 및 탐색할 주제를 입력하세요..." 
+                               class="flex-1 px-6 py-4 rounded-2xl bg-slate-800 border-none text-white focus:ring-2 focus:ring-blue-500 text-lg">
+                        <button onclick="startSearch()" class="bg-blue-600 text-white px-8 py-4 rounded-2xl hover:bg-blue-500 transition-all font-bold text-lg shadow-xl">
+                            이식 및 학습
+                        </button>
+                    </div>
+                </section>
             </div>
-        </section>
+            <div class="lg:col-span-1">
+                <div class="glass-card rounded-3xl p-8 h-full flex flex-col justify-center text-center">
+                    <div id="knowledge-count" class="text-5xl font-black text-white mb-2">0</div>
+                    <div class="text-slate-400 text-sm uppercase">Total Insights</div>
+                </div>
+            </div>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                    <i class="fas fa-brain text-purple-500"></i> 학습 진행도
-                </h2>
-                <div id="status" class="text-gray-600 italic">데이터를 불러오는 중...</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                    <i class="fas fa-book text-green-500"></i> 최근 발견한 지식
-                </h2>
-                <div id="recent" class="text-sm text-gray-500 italic">아직 검색 기록이 없습니다.</div>
-            </div>
+        <!-- 지식 리스트 -->
+        <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
+            <i class="fas fa-dna text-blue-400"></i> 수집된 지식 아카이브
+        </h2>
+        <div id="knowledge-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 지식 카드 동적 삽입 -->
         </div>
     </div>
 
     <script>
         async function startSearch() {
             const query = document.getElementById('query').value;
-            if (!query) return alert('주제를 입력해 주세요!');
-
+            if (!query) return;
+            const btn = event.target;
+            btn.innerHTML = '<i class="fas fa-sync fa-spin"></i> Engine Syncing...';
+            
             const response = await fetch('/search', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 body: `query=${encodeURIComponent(query)}`
             });
             const data = await response.json();
-            alert(data.message);
-            updateStatus();
+            updateDashboard();
+            document.getElementById('query').value = '';
+            btn.innerHTML = '이식 및 학습';
         }
 
-        async function updateStatus() {
-            const response = await fetch('/learning-status');
-            const data = await response.json();
-            document.getElementById('status').innerHTML = `
-                <div class="text-2xl font-bold text-blue-600">Level ${data.level}</div>
-                <p class="text-sm">현재까지 ${data.search_count}개의 지식 조각을 수집했습니다.</p>
-            `;
+        async function updateDashboard() {
+            const statRes = await fetch('/learning-status');
+            const stats = await statRes.json();
+            document.getElementById('level-text').innerText = `LEVEL ${stats.level}`;
+            document.getElementById('knowledge-count').innerText = stats.knowledge_count;
+
+            const listRes = await fetch('/recent-knowledge');
+            const items = await listRes.json();
+            const container = document.getElementById('knowledge-list');
+            
+            container.innerHTML = items.map(item => `
+                <div class="glass-card p-6 rounded-2xl border border-slate-700 hover:border-blue-500 transition-all group">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-[10px] font-bold bg-slate-700 px-2 py-1 rounded text-blue-300 uppercase">${item.topic}</span>
+                        <div class="flex gap-2 text-slate-500 text-xs">
+                            <i class="fas fa-shield-alt ${item.confidence > 0.7 ? 'text-green-500' : 'text-yellow-500'}"></i>
+                            ${Math.round(item.confidence * 100)}%
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">${item.title}</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4">${item.snippet}</p>
+                    <a href="${item.link}" target="_blank" class="text-xs text-blue-500 font-bold hover:underline">SOURCE VIEW →</a>
+                </div>
+            `).join('');
         }
-        updateStatus();
+
+        updateDashboard();
+        setInterval(updateDashboard, 5000);
     </script>
 </body>
 </html>
