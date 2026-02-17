@@ -50,18 +50,19 @@ def search():
         if not query:
             return jsonify({"status": "error", "message": "주제를 입력해주세요."})
 
-        # AI 기반 지식 생성 엔진 (ZeroClaw Style)
+        # AI 기반 지식 생성 엔진 (실제 링크 생성 로직 추가)
+        search_link = f"https://scholar.google.com/scholar?q={query}"
         insights = [
-            {"title": f"{query}의 미래 전망과 산업적 가치", "snippet": f"현재 {query} 기술은 급격한 변곡점을 맞이하고 있으며, 향후 3년 내에 관련 시장이 200% 이상 성장할 것으로 예측됩니다."},
-            {"title": f"{query} 핵심 기술 백서 요약", "snippet": f"이 지식 카드는 {query}의 기술적 구조와 최적화 방안에 대한 최신 연구 결과를 기반으로 생성되었습니다."},
-            {"title": f"{query} 도입 시 주의사항 및 리스크 분석", "snippet": f"실제 프로젝트에 {query}를 적용할 때 발생할 수 있는 3가지 주요 리스크와 그에 대한 해결책을 정리했습니다."}
+            {"title": f"{query}의 미래 전망과 산업적 가치", "snippet": f"현재 {query} 기술은 급격한 변곡점을 맞이하고 있으며, 향후 3년 내에 관련 시장이 200% 이상 성장할 것으로 예측됩니다.", "link": search_link},
+            {"title": f"{query} 핵심 기술 백서 요약", "snippet": f"이 지식 카드는 {query}의 기술적 구조와 최적화 방안에 대한 최신 연구 결과를 기반으로 생성되었습니다.", "link": f"https://www.google.com/search?tbm=bks&q={query}"},
+            {"title": f"{query} 도입 시 주의사항 및 리스크 분석", "snippet": f"실제 프로젝트에 {query}를 적용할 때 발생할 수 있는 3가지 주요 리스크와 그에 대한 해결책을 정리했습니다.", "link": search_link}
         ]
 
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         for insight in insights:
             c.execute("INSERT INTO knowledge_base (topic, title, link, snippet, source_type, confidence) VALUES (?, ?, ?, ?, ?, ?)",
-                      (query, insight['title'], "#", insight['snippet'], "ZeroClaw-AI", round(random.uniform(0.85, 0.99), 2)))
+                      (query, insight['title'], insight['link'], insight['snippet'], "ZeroClaw-AI", round(random.uniform(0.85, 0.99), 2)))
         conn.commit()
         conn.close()
         
