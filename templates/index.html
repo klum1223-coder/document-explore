@@ -63,20 +63,34 @@
 
     <script>
         async function startSearch() {
-            const query = document.getElementById('query').value;
+            const queryInput = document.getElementById('query');
+            const query = queryInput.value;
             if (!query) return;
             const btn = event.target;
-            btn.innerHTML = '<i class="fas fa-sync fa-spin"></i> Engine Syncing...';
+            const originalBtnText = btn.innerHTML;
             
-            const response = await fetch('/search', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `query=${encodeURIComponent(query)}`
-            });
-            const data = await response.json();
-            updateDashboard();
-            document.getElementById('query').value = '';
-            btn.innerHTML = '이식 및 학습';
+            btn.innerHTML = '<i class="fas fa-sync fa-spin"></i> Engine Syncing...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `query=${encodeURIComponent(query)}`
+                });
+                const data = await response.json();
+                console.log("Search Result:", data);
+                
+                // 데이터 주입 후 즉시 대시보드 갱신
+                await updateDashboard();
+                queryInput.value = '';
+            } catch (error) {
+                console.error("Search Error:", error);
+                alert("지식 주입 중 오류가 발생했습니다.");
+            } finally {
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
         }
 
         async function updateDashboard() {
