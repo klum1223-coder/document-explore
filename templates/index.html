@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Research Hub 🧸</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background-color: #f8f9fa; }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Private Research Hub</h1>
+            <p class="text-gray-500">당신만의 지식 탐험과 학습을 위한 공간 🧸</p>
+        </header>
+
+        <section class="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-gray-100">
+            <div class="flex gap-4">
+                <input type="text" id="query" placeholder="궁금한 주제를 입력하세요 (예: 양자역학, AI 윤리)" 
+                       class="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <button onclick="startSearch()" class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition font-bold">
+                    검색 및 학습
+                </button>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-brain text-purple-500"></i> 학습 진행도
+                </h2>
+                <div id="status" class="text-gray-600 italic">데이터를 불러오는 중...</div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-book text-green-500"></i> 최근 발견한 지식
+                </h2>
+                <div id="recent" class="text-sm text-gray-500 italic">아직 검색 기록이 없습니다.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function startSearch() {
+            const query = document.getElementById('query').value;
+            if (!query) return alert('주제를 입력해 주세요!');
+
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `query=${encodeURIComponent(query)}`
+            });
+            const data = await response.json();
+            alert(data.message);
+            updateStatus();
+        }
+
+        async function updateStatus() {
+            const response = await fetch('/learning-status');
+            const data = await response.json();
+            document.getElementById('status').innerHTML = `
+                <div class="text-2xl font-bold text-blue-600">Level ${data.level}</div>
+                <p class="text-sm">현재까지 ${data.search_count}개의 지식 조각을 수집했습니다.</p>
+            `;
+        }
+        updateStatus();
+    </script>
+</body>
+</html>
