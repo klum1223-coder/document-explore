@@ -1,17 +1,18 @@
 @echo off
+title ZeroClaw AI Research Hub
 echo ==========================================
-echo   ZeroClaw Research Hub Starter 🧸
+echo   ZeroClaw AI Research Hub Engine 🧸
 echo ==========================================
 echo.
-echo [1/3] Checking dependencies...
-pip install flask flask-cors requests
+echo [*] Checking Environment...
+pip install flask flask-cors requests > nul
+echo [*] Launching Knowledge Engine...
 echo.
-echo [2/3] Cleaning up old data for fresh start...
-if exist data\knowledge.db del /q data\knowledge.db
+echo [!] SERVER IS STARTING...
+echo [!] AUTO-OPENING: http://localhost:5000
 echo.
-echo [3/3] Starting the Knowledge Engine...
-echo.
-echo >>> Open your browser at: http://localhost:5000
-echo.
+:: 브라우저 자동 실행
+start http://localhost:5000
+:: 서버 실행
 python app.py
 pause
